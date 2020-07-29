@@ -135,10 +135,9 @@ const createMemoryHistory = () => {
           resolve();
         };
 
-        // Resolve the promise in the next frame
-        // If `popstate` hasn't fired by then, then it wasn't handled
-        requestAnimationFrame(() => requestAnimationFrame(done));
-
+        // `popstate` should always fire after we call `history.go`
+        // So we wait for it to resolve the promise, on Firefox, we've seen it take 50ms
+        // TODO: what if 2 popstate fire for 2 history.go, need to handle it properly with a queue
         window.addEventListener('popstate', done);
         window.history.go(n);
       });
